@@ -48,6 +48,11 @@ chmod 1777 /mnt/var/tmp
 chmod 1777 /mnt/tmp
 
 #############################################################
+cd /usr/freebsd-dist
+tar -x -C /mnt -f base.txz
+tar -x -C /mnt -f kernel.txz
+tar -x -C /mnt -f src.txz
+#############################################################
 # vi /boot/loader.conf
 
 # The following two should already be in here.
