@@ -9,6 +9,8 @@ gpart add -a 4k -s 800K -t efi ada0
  umount /mnt
 ############################################################
 #
+# geli init -g -s 4k nvd0p3
+# geli attach nvd0p3
 ############################################################
 # Creating zpool
 zpool create -o ashift=12 -o autotrim=on -o altroot=/mnt -O compression=on -O atime=off -O normalization=formD -O dnodesize=auto -O mountpoint=/ -O canmount=off tank /dev/xyz
