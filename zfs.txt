@@ -1,0 +1,65 @@
+############################################################
+# EFI partition
+gpart add -a 4k -s 800K -t efi ada0
+ # Create a FAT32 partition
+ newfs_msdos -F 32 -c 1 /dev/ada0p1
+ mount -t msdosfs -o longnames /dev/ada0p1 /mnt
+ mkdir -p /mnt/EFI/BOOT
+ cp /boot/loader.efi /mnt/EFI/BOOT/BOOTX64.efi
+ umount /mnt
+############################################################
+#
+############################################################
+# Creating zpool
+zpool create -o ashift=12 -o autotrim=on -o altroot=/mnt -O compression=on -O atime=off -O normalization=formD -O dnodesize=auto -O mountpoint=/ -O canmount=off tank /dev/xyz
+#
+#Creating basic datasets
+#
+zfs create -o canmount=off -o mountpoint=none tank/os
+zfs create -o canmount=noauto -o mountpoint=/ tank/os/main
+
+#usr
+#
+zfs create -o canmount=off -o mountpoint=/usr tank/usr
+zfs create -o exec=off -o setuid=off -o compression=gzip tank/usr/src
+zfs create -o mountpoint=/usr/ports -o setuid=off   tank/usr/ports
+#
+zfs create                     -o exec=off     -o setuid=off   tank/usr/ports/distfiles
+zfs create                     -o exec=off     -o setuid=off   tank/usr/ports/packages
+#var
+#
+zfs create -o canmount=off -o mountpoint=/var tank/var
+zfs create -o exec=off -o setuid=off tank/var/audit
+zfs create -o exec=off -o setuid=off tank/var/crash
+zfs create -o exec=off -o setuid=off tank/var/log
+zfs create -o atime=on -o exec=off -o setuid=off tank/var/mail
+zfs create -o exec=on -o setuid=off tank/var/tmp
+zfs create -o exec=off     -o setuid=off   tank/var/db
+zfs create -o exec=on -o setuid=off   tank/var/db/pkg
+zfs create -o exec=off -o setuid=off   tank/var/run
+# TMP
+zfs create -o exec=on -o setuid=off -o utf8only=off -o normalization=none tank/tmp
+#HOME
+zfs create tank/home
+#
+
+chmod 1777 /mnt/var/tmp
+chmod 1777 /mnt/tmp
+
+#############################################################
+# vi /boot/loader.conf
+
+# The following two should already be in here.
+cryptodev_load="YES"
+zfs_load="YES"
+
+# Add GELI module loading.
+geom_eli_load="YES"
+
+############################################################
+# vi /etc/rc.conf
+
+zfs_enable="YES"
+############################################################
+# /etc/fstab
+/dev/nvd0p2  none         swap       sw,late    0    0
