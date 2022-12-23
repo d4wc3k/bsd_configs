@@ -42,7 +42,8 @@ zfs create -o exec=on -o setuid=off -o utf8only=off -o normalization=none tank/t
 #HOME
 zfs create tank/home
 #
-
+zpool set bootfs=tank/os/main tank
+zpool set cachefile=/mnt/boot/zfs/zpool.cache tank
 chmod 1777 /mnt/var/tmp
 chmod 1777 /mnt/tmp
 
