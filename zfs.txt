@@ -40,15 +40,11 @@ zfs create -o exec=off -o setuid=off -o compression=lz4 tank/var/log
 zfs create -o atime=on -o exec=off -o setuid=off -o compression=lz4 tank/var/mail
 zfs create -o exec=on -o setuid=off tank/var/tmp
 zfs create -o exec=off     -o setuid=off   tank/var/db
-zfs create -o exec=on -o setuid=off   tank/var/db/pkg
+zfs create -o exec=on -o setuid=off  -o compression=lz4 tank/var/db/pkg
 zfs create -o exec=off -o setuid=off   tank/var/run
-zfs create -o mountpoint=/var/cache tank/var/cache
-zfs create -o setuid=off -o exec=off tank/var/cache/pkg
 # TMP
 zfs create -o exec=on -o setuid=off -o utf8only=off -o normalization=none tank/tmp
 #
-zpool set bootfs=tank/os/main tank
-zpool set cachefile=/mnt/boot/zfs/zpool.cache tank
 chmod 1777 /mnt/var/tmp
 chmod 1777 /mnt/tmp
 
@@ -78,4 +74,5 @@ zfs_enable="YES"
 #################################
 Finish with zpool
 zpool set bootfs=tank/os/main tank
-zpool set cachefile=/mnt/boot/zfs/zpool.cache tank
+cp /tmp/zpool.cache /mnt/boot/zfs/zpool.cache
+zpool set cachefile=/boot/zfs/zpool.cache tank
