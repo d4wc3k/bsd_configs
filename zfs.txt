@@ -35,7 +35,7 @@ zfs create  zroot/usr/local
 #
 zfs create -o canmount=off -o mountpoint=/var tank/var
 zfs create -o exec=off -o setuid=off tank/var/audit
-zfs create -o exec=off -o setuid=off tank/var/crash
+zfs create -o exec=off -o setuid=off -o compression=lz4 tank/var/crash
 zfs create -o exec=off -o setuid=off tank/var/log
 zfs create -o atime=on -o exec=off -o setuid=off tank/var/mail
 zfs create -o exec=on -o setuid=off tank/var/tmp
